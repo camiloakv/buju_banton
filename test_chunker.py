@@ -2,7 +2,7 @@
 from ingestion.chunker import Chunker
 
 chunker = Chunker(chunk_size=500, chunk_overlap=50)
-docs = chunker.chunk_file("sample.txt")
+docs = chunker.chunk_file("./data/raw/txt/sample.txt")
 
 print(f"Total chunks: {len(docs)}")
 print(f"\n--- Chunk 0 ---\n{docs[0].content}")

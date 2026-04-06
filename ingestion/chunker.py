@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import List
-import pdfplumber                          # pip install pdfplumber
+import pdfplumber
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from dataclasses import dataclass, field
 

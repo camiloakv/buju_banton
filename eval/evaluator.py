@@ -10,7 +10,7 @@ from ragas.metrics import (
 from ragas.llms import LangchainLLMWrapper
 from ragas.embeddings import LangchainEmbeddingsWrapper
 from langchain_ollama import OllamaLLM
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 from query.pipeline import RAGPipeline
 from eval.dataset import build_eval_dataset

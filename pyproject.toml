@@ -9,6 +9,7 @@ dependencies = [
     "datasets>=4.8.4",
     "faiss-cpu>=1.13.2",
     "langchain>=1.2.15",
+    "langchain-huggingface>=1.2.1",
     "langchain-ollama>=1.1.0",
     "langchain-text-splitters>=1.1.1",
     "mlflow>=3.11.1",

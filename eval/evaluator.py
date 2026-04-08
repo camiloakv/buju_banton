@@ -9,7 +9,7 @@ from ragas.metrics import (
 )
 from ragas.llms import LangchainLLMWrapper
 from ragas.embeddings import LangchainEmbeddingsWrapper
-from langchain_community.llms import Ollama
+from langchain_ollama import OllamaLLM
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 from query.pipeline import RAGPipeline
@@ -18,7 +18,7 @@ from eval.dataset import build_eval_dataset
 
 def _get_ragas_llm(model: str = "llama3.1"):
     """Point RAGAs at your local Ollama model for scoring."""
-    return LangchainLLMWrapper(Ollama(model=model))
+    return LangchainLLMWrapper(OllamaLLM(model=model))
 
 
 def _get_ragas_embeddings(model_name: str = "all-MiniLM-L6-v2"):

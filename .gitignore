@@ -10,5 +10,6 @@ wheels/
 .venv
 
 # Misc
+.env
 data/
 vector_store/

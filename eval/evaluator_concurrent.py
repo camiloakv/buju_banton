@@ -1,3 +1,4 @@
+from typing import Any
 from datasets import Dataset
 from ragas import evaluate
 from ragas.metrics import (
@@ -8,7 +9,6 @@ from ragas.metrics import (
 )
 from ragas.llms import LangchainLLMWrapper
 from ragas.embeddings import LangchainEmbeddingsWrapper
-from ragas.run_config import RunConfig                        # ← add this
 from langchain_ollama import OllamaLLM
 from langchain_huggingface import HuggingFaceEmbeddings
 
@@ -18,12 +18,7 @@ from eval.dataset import build_eval_dataset
 
 def _get_ragas_llm(model: str = "llama3.1"):
     """Point RAGAs at your local Ollama model for scoring."""
-    return LangchainLLMWrapper(
-        OllamaLLM(
-            model=model,
-            timeout=300,        # 5 min per request — local models are slow
-        )
-    )
+    return LangchainLLMWrapper(OllamaLLM(model=model))
 
 
 def _get_ragas_embeddings(model_name: str = "all-MiniLM-L6-v2"):
@@ -34,9 +29,9 @@ def _get_ragas_embeddings(model_name: str = "all-MiniLM-L6-v2"):
 
 
 def run_evaluation(
-    pipeline:        RAGPipeline,
+    pipeline: RAGPipeline,
     embedding_model: str = "all-MiniLM-L6-v2",
-    llm_model:       str = "llama3.1",
+    llm_model: str = "llama3.1",
 ) -> dict[str, float]:
     """
     Runs the full RAGAs evaluation loop.
@@ -49,25 +44,19 @@ def run_evaluation(
     for row in eval_dataset:
         response = pipeline.run(row["question"])
         records.append({
-            "question":     row["question"],
-            "ground_truth": row["ground_truth"],
-            "answer":       response.answer,
+            "question":         row["question"],
+            "ground_truth":     row["ground_truth"],
+            "answer":           response.answer,
             # RAGAs expects a list of strings — one string per retrieved chunk
-            "contexts":     [doc.content for doc, _ in response.sources],
+            "contexts":         [doc.content for doc, _ in response.sources],
         })
 
     ragas_dataset = Dataset.from_list(records)
 
-    run_config = RunConfig(          # ← proper object instead of dict
-        max_workers=1,               # sequential — required for Ollama
-        timeout=300,                 # 5 min per request
-        max_retries=3,               # retry on transient failures
-    )
-
     # 2. Score with RAGAs (uses Ollama locally — no API calls)
     results = evaluate(
-        dataset    = ragas_dataset,
-        metrics    = [
+        dataset   = ragas_dataset,
+        metrics   = [
             faithfulness,
             answer_relevancy,
             context_precision,
@@ -75,10 +64,6 @@ def run_evaluation(
         ],
         llm        = _get_ragas_llm(llm_model),
         embeddings = _get_ragas_embeddings(embedding_model),
-        # ── the two lines that fix the timeout ──────────────────
-        run_config       = run_config,
-        raise_exceptions = False,   # log failures instead of crashing
-        # ────────────────────────────────────────────────────────
     )
 
     return results

@@ -18,13 +18,6 @@ pipeline = RAGPipeline(embedder=embedder, store=store, top_k=TOP_K, model=LLM_MO
 # Run evaluation
 print("Running RAGAs evaluation — this takes a few minutes...")
 metrics = run_evaluation(pipeline, embedding_model=EMBEDDING_MODEL, llm_model="llama3.1")
-print(f"!!!!!!!!!!!!!!!!!!!!!! {type(metrics)}")
-print(f"!!!!!!!!!!!!!!!!!!!!!! {type(metrics.scores)}")
-print(f"!!!!!!!!!!!!!!!!!!!!!! {metrics.scores}")
-for i in metrics.scores:
-    print(i)
-    print(type(i))
-    print("================")
 
 # Log to MLflow
 pipeline_config = {

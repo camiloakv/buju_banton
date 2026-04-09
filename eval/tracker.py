@@ -1,10 +1,11 @@
 import mlflow
 from datetime import datetime
-from ragas.evaluation import EvaluationResult
+#from ragas.evaluation import EvaluationResult
 
 
 def log_eval_run(
-    results:         EvaluationResult,
+#    results:         EvaluationResult,
+    results,
     pipeline_config: dict,
     run_name:        str | None = None,
 ) -> str:
@@ -15,19 +16,25 @@ def log_eval_run(
     pipeline_config should include everything that affects quality:
         chunk_size, chunk_overlap, embedding_model, llm_model, top_k
     """
-    mlflow.set_experiment("rag-evaluation")
+    mlflow.set_experiment("another-rag-evaluation")
 
     run_name = run_name or datetime.now().strftime("eval_%Y%m%d_%H%M%S")
 
-    # Convert EvaluationResult → plain dict of metric_name: float
-    metrics = {k: float(v) for k, v in results.scores.items()}  # ← fix
-    print("IN TRACKER -----------------------------------")
-    print(len(metrics))
-    for metric_name, score in metrics.items():
-        print(type(metric_name), type(score))
-        print(metric_name)
-        print(score)
-        print("-----------")
+    # results.scores is a list of dicts, one per sample:
+    # [
+    #   {"faithfulness": 0.9, "answer_relevancy": 0.8, ...},
+    #   {"faithfulness": 0.7, "answer_relevancy": 0.9, ...},
+    #   ...
+    # ]
+    sample_scores = results.scores
+    metric_names  = list(sample_scores[0].keys())
+
+    # Average each metric across all samples
+    metrics = {
+        name: sum(s[name] for s in sample_scores if s[name] is not None)
+              / max(sum(1 for s in sample_scores if s[name] is not None), 1)
+        for name in metric_names
+    }
 
     with mlflow.start_run(run_name=run_name) as run:
 
@@ -36,7 +43,7 @@ def log_eval_run(
 
         # Log RAGAs scores as metrics
         for metric_name, score in metrics.items():
-            mlflow.log_metric(metric_name, score)
+            mlflow.log_metric(metric_name, float(score))
 
         # Composite score — useful for quick ranking across runs
         avg = sum(metrics.values()) / len(metrics)

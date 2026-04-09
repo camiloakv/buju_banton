@@ -6,7 +6,7 @@ class QueryRequest(BaseModel):
     question:  str = Field(..., min_length=3, max_length=1000)
     top_k:     int = Field(default=5, ge=1, le=20)
 
-    model_config = {"json_schema_extra": {"example": {"question": "What is the refund policy?", "top_k": 5}}}
+    model_config = {"json_schema_extra": {"example": {"question": "What is encoder-decoder attention?", "top_k": 5}}}
 
 
 class SourceDocument(BaseModel):

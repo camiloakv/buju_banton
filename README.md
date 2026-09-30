@@ -20,5 +20,21 @@ A FastAPI service that ingests documents, chunks & embeds them, answers question
 - [x] Ingestion and query with manual run:
   - Data Ingestion: `python ingest.py`
   - Query (hardcoded question): `python run.py`
-- [x] Evaluation of
+- [x] Evaluation through RAGAs and MLflow:
+  - Run evaluation: `python evaluate.py`
+  - Follow results in MLflow: `mlflow ui`
+- [x] Serving with FastAPI:
+  - Start the API: `uvicorn api.app:app --reload --port 8000`
+  - Test batch endpoint:
+    ```
+    curl -X POST http://localhost:8000/query \
+         -H "Content-Type: application/json" \
+         -d '{"question": "What is encoder-decoder attention?", "top_k": 5}'
+    ```
+  - Test streaming endpoint:
+    ```
+    curl -N "http://localhost:8000/query/stream?question=What+is+encoder-decoder+attention"
+    ```
+
+- [ ] Containerization with Docker
 - [ ] ...

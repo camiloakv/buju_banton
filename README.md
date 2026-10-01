@@ -1,4 +1,10 @@
-# Production RAG system
+# Buju Banton - Production RAG system
+
+<p align="right"><i>
+Raggamuffin music (or simply ragga) is a subgenre of dancehall and reggae music. The instrumentals primarily consist of electronic music with heavy use of sampling.<br>
+<br>
+en.wikipedia.org/wiki/Ragga
+</i></p>
 
 <p>
 <img src="https://img.shields.io/badge/LangChain-ffffff?style=flat&logo=langchain&logoColor=1b3b3a" />
